@@ -139,7 +139,7 @@ def parse(s: str, today: date | None = None) -> date:
         return _apply_offset(today_, int(qty), unit, direction)
 
     # --- ISO format: "2025-12-04" ---
-    m = re.match(r"(\d{4})[-/](\d{2})[-/](\d{2})$", s)
+    m = re.match(r"(\d{4})[-/](\d{1,2})[-/](\d{1,2})$", s)
     if m:
         year, month, day = m.groups()
         return date(int(year), int(month), int(day))
