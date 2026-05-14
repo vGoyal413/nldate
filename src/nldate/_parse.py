@@ -2,16 +2,39 @@ from datetime import date, timedelta
 import re
 
 MONTHS = {
-    "january": 1, "february": 2, "march": 3, "april": 4,
-    "may": 5, "june": 6, "july": 7, "august": 8,
-    "september": 9, "october": 10, "november": 11, "december": 12,
-    "jan": 1, "feb": 2, "mar": 3, "apr": 4,
-    "jun": 6, "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12,
+    "january": 1,
+    "february": 2,
+    "march": 3,
+    "april": 4,
+    "may": 5,
+    "june": 6,
+    "july": 7,
+    "august": 8,
+    "september": 9,
+    "october": 10,
+    "november": 11,
+    "december": 12,
+    "jan": 1,
+    "feb": 2,
+    "mar": 3,
+    "apr": 4,
+    "jun": 6,
+    "jul": 7,
+    "aug": 8,
+    "sep": 9,
+    "oct": 10,
+    "nov": 11,
+    "dec": 12,
 }
 
 WEEKDAYS = {
-    "monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3,
-    "friday": 4, "saturday": 5, "sunday": 6,
+    "monday": 0,
+    "tuesday": 1,
+    "wednesday": 2,
+    "thursday": 3,
+    "friday": 4,
+    "saturday": 5,
+    "sunday": 6,
 }
 
 UNITS = {"day": 1, "week": 7, "month": 0, "year": 0}
@@ -34,8 +57,12 @@ def _add_months(d: date, months: int) -> date:
     month = d.month - 1 + months
     year = d.year + month // 12
     month = month % 12 + 1
-    day = min(d.day, [31, 29 if year % 4 == 0 else 28, 31, 30, 31, 30,
-                       31, 31, 30, 31, 30, 31][month - 1])
+    day = min(
+        d.day,
+        [31, 29 if year % 4 == 0 else 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][
+            month - 1
+        ],
+    )
     return date(year, month, day)
 
 
@@ -66,7 +93,9 @@ def parse(s: str, today: date | None = None) -> date:
         return today_ + timedelta(days=-1)
 
     # --- Next/last weekday ---
-    m = re.match(r"(next|last)\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)", s)
+    m = re.match(
+        r"(next|last)\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)", s
+    )
     if m:
         direction, weekday_str = m.groups()
         target = WEEKDAYS[weekday_str]
@@ -83,9 +112,7 @@ def parse(s: str, today: date | None = None) -> date:
             return today_ + timedelta(days=-days_behind)
 
     # --- Offset from an anchor: "5 days before December 1st, 2025" ---
-    m = re.match(
-        r"(\d+)\s+(days?|weeks?|months?|years?)\s+(before|after)\s+(.+)", s
-    )
+    m = re.match(r"(\d+)\s+(days?|weeks?|months?|years?)\s+(before|after)\s+(.+)", s)
     if m:
         qty, unit, direction_str, anchor_str = m.groups()
         anchor = parse(anchor_str.strip(), today=today_)
