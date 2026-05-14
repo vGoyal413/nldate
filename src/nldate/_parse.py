@@ -139,10 +139,28 @@ def parse(s: str, today: date | None = None) -> date:
         return _apply_offset(today_, int(qty), unit, direction)
 
     # --- ISO format: "2025-12-04" ---
-    m = re.match(r"(\d{4})-(\d{2})-(\d{2})$", s)
+    m = re.match(r"(\d{4})[-/](\d{2})[-/](\d{2})$", s)
     if m:
         year, month, day = m.groups()
         return date(int(year), int(month), int(day))
+
+    # --- US format: "12/04/2025" (month/day/year) ---
+    m = re.match(r"(\d{1,2})/(\d{1,2})/(\d{4})$", s)
+    if m:
+        month, day, year = m.groups()
+        return date(int(year), int(month), int(day))
+
+    # --- "in X days/weeks/months/years" ---
+    m = re.match(r"in\s+(\d+)\s+(days?|weeks?|months?|years?)", s)
+    if m:
+        qty, unit = m.groups()
+        return _apply_offset(today_, int(qty), unit, 1)
+
+    # --- "X days/weeks/months/years later" ---
+    m = re.match(r"(\d+)\s+(days?|weeks?|months?|years?)\s+later", s)
+    if m:
+        qty, unit = m.groups()
+        return _apply_offset(today_, int(qty), unit, 1)
 
     # --- Absolute date as fallback ---
     absolute = _parse_absolute(s)
