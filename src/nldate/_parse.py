@@ -47,7 +47,7 @@ def _parse_absolute(s: str) -> date | None:
     m = re.match(pattern, s.strip(), re.IGNORECASE)
     if m:
         month_str, day_str, year_str = m.groups()
-        month = MONTHS.get(month_str.lower())
+        month = MONTHS.get(month_str.lower().rstrip("."))
         if month:
             return date(int(year_str), month, int(day_str))
     return None
